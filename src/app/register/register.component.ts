@@ -13,18 +13,28 @@ export class RegisterComponent {
   username: string = "";
   password: string = "";
   password2: string = "";
+  registerButtonStatus = false;
+  emailStatus:boolean = false;
+  passwordStatus:boolean = false;
+  samePassword:boolean = false;
+  password2Status:boolean = false;
 
+  validateInputs(event:any,type:string){
+      if(type=='username'){
+        event.target.value.length>5 ? this.emailStatus = true : this.emailStatus = false;
+      }else if(type=='password'){
+        event.target.value.length>5 ? this.passwordStatus = true : this.passwordStatus = false;
+      }else if(type=='password2'){
+        event.target.value.length>5 ? this.password2Status = true : this.password2Status = false;
+      }
+      this.password === this.password2 && this.password2Status && this.passwordStatus ? this.password2Status = true : this.password2Status = false;
+      let allCheck = this.emailStatus && this.passwordStatus && this.password2Status;
+      allCheck ? this.registerButtonStatus = true : this.registerButtonStatus = false;
+  }
   register(){
-    if(this.username == "" || this.password == "" || this.password2 == ""){
-      alert("Please fill in all fields");
-    }else if (this.password.length < 6) {
-      alert("Passwords must be at least 6 characters long");
-      return;
-    }else if (this.username.length < 6) {
-      alert("Username must be at least 6 characters long");
-      return;
-    }else if (this.password != this.password2) {
-      alert("Passwords do not match");
+    let allCheck = this.emailStatus && this.passwordStatus && this.password2Status;
+    if(!allCheck){
+      alert("Please check all fields");
       return;
     }else{
       this.http.post("https://iamumut.test/api/userRegister", {

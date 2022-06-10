@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
+import {Router} from "@angular/router";
+import {AuthService} from "../auth.service";
 
 @Component({
   selector: 'app-login',
@@ -8,35 +10,45 @@ import {HttpClient} from "@angular/common/http";
 })
 export class LoginComponent {
 
-  constructor(private http:HttpClient) { }
-  username: string = "";
-  password: string = "";
-  rememberMe: boolean = false;
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private AuthService: AuthService
+  ) {  }
 
+  username: string = "";
+  usernameStatus: boolean = false;
+  password: string = "";
+  passwordStatus: boolean = false;
+  rememberMe: boolean = false;
+  loginButtonStatus: boolean = false;
+
+  validateInputs(event:any,type:string){
+    if(type=='username'){
+      event.target.value.length>5 ? this.usernameStatus = true : this.usernameStatus = false;
+    }else if(type=='password'){
+      event.target.value.length>5 ? this.passwordStatus = true : this.passwordStatus = false;
+    }
+
+    let allCheck = this.usernameStatus && this.passwordStatus;
+    allCheck ? this.loginButtonStatus = true : this.loginButtonStatus = false;
+}
+  
   login(): void {
-    if(this.username == "" || this.password == ""){
-      alert("Please fill in all fields");
-    }else if (this.password.length < 6) {
-      alert("Passwords must be at least 6 characters long");
+    let allCheck = this.usernameStatus && this.passwordStatus;
+    if(!allCheck){
+      alert("Please fill all fields");
       return;
-    }else if (this.username.length < 6) {
-      alert("Username must be at least 6 characters long");
-      return;
-    }else{
-    this.http.post("https://iamumut.test/api/userLogin", {
-      username: this.username,
-      password: this.password,
-    }).subscribe(
+    }
+    let loginStatus:any = this.AuthService.login(this.username, this.password);
+    loginStatus.subscribe(
       (data:any) => {
         if(data['success']) {
-          alert("Login successfull");
+            alert("Login successfully");
+            this.router.navigate(['/home']).then(r => {}).catch(e => {});
+        }else{
+          alert("Login failed");
         }
-      },
-      (error:any) => {
-        console.log(error);
-        alert(error.error.message);
-      }
-    );
-  }
+      });
   }
 }

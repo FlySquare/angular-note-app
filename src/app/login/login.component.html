@@ -8,11 +8,11 @@
             <h3 class="mb-5">Sign in</h3>
 
             <div class="form-outline mb-4">
-              <input type="text" id="typeEmailX-2" [(ngModel)]="username" placeholder="Username" class="form-control form-control-lg" />
+              <input type="text" id="typeEmailX-2" (keyup)="validateInputs($event,'username')" (keydown.space)="$event.preventDefault()" [(ngModel)]="username" placeholder="Username" class="form-control form-control-lg" />
             </div>
 
             <div class="form-outline mb-4">
-              <input type="password" id="typePasswordX-2" [(ngModel)]="password" placeholder="Password" class="form-control form-control-lg" />
+              <input type="password" id="typePasswordX-2" (keyup)="validateInputs($event,'password')" [(ngModel)]="password" placeholder="Password" class="form-control form-control-lg" />
             </div>
 
             <!-- Checkbox -->
@@ -21,7 +21,7 @@
               <label class="form-check-label" for="form1Example3" style="margin-left: 10px"> Remember password </label>
             </div>
 
-            <button style="width: 100%" (click)="login()" class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
+            <button style="width: 100%" [disabled]="loginButtonStatus == false" (click)="login()" class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
 
             <hr class="my-4">
 
